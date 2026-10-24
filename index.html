@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧋 寶島手搖調飲大師 — 限時營運挑戰</title>
+  <style>
+    :root {
+      --bg-main: #fbf8f3;
+      --card-bg: #ffffff;
+      --card-border: #e6dcce;
+      --accent-brown: #6d4c41;
+      --accent-orange: #e65100;
+      --accent-green: #2e7d32;
+      --text-main: #3e2723;
+      --shadow-soft: 0 4px 12px rgba(109, 76, 65, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ---------------- 首頁 Home Page ---------------- */
+    .home-screen {
+      width: 90vw;
+      max-width: 650px;
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(109, 76, 65, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .home-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: -10px;
+    }
+
+    .home-subtitle {
+      font-size: 0.9rem;
+      color: #8d6e63;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .home-stats-card {
+      width: 100%;
+      background: var(--bg-main);
+      border: 1px dashed var(--card-border);
+      border-radius: 14px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .home-stat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .home-stat-label {
+      font-size: 0.78rem;
+      color: #8d6e63;
+      font-weight: bold;
+    }
+
+    .home-stat-val {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent-orange);
+    }
+
+    .btn-start-game {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent-orange);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(230, 81, 0, 0.25);
+      transition: all 0.2s;
+    }
+
+    .btn-start-game:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    .btn-reset-data {
+      background: transparent;
+      border: none;
+      color: #b0bec5;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ---------------- 製作頁面 Main Workspace ---------------- */
+    .app-container {
+      width: 98vw;
+      height: 96vh;
+      max-width: 1360px;
+      max-height: 850px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* 頂部 Header */
+    .header-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 8px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-soft);
+      height: 48px;
+    }
+
+    .level-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #b18972;
+    }
+
+    .main-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .stats-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .stat-badge {
+      background: var(--bg-main);
+      border: 1px solid var(--card-border);
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+
+    .stat-badge span {
+      color: var(--accent-orange);
+      font-size: 0.95rem;
+    }
+
+    .time-badge {
+      background: #37474f;
+      color: #ffd54f;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      font-family: monospace;
+    }
+
+    /* 顧客點單區 */
+    .customer-card {
+      background: var(--card-bg);
+      border: 1.5px solid #ffcc80;
+      border-radius: 12px;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-soft);
+      height: 54px;
+    }
+
+    .cust-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cust-avatar {
+      font-size: 2rem;
+      background: var(--bg-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--card-border);
+    }
+
+    .order-speech {
+      font-size: 0.98rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .order-sub-req {
+      font-size: 0.78rem;
+      color: #e65100;
+      font-weight: bold;
+    }
+
+    .patience-box {
+      width: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-end;
+    }
+
+    .patience-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #a1887f;
+    }
+
+    .patience-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .patience-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: #43a047;
+      transition: width 0.3s linear, background-color 0.3s;
+    }
+
+    /* 吧檯分類區 */
+    .equipment-sections {
+      display: grid;
+      grid-template-columns: 2.2fr 1.1fr 1.1fr;
+      gap: 10px;
+      height: 105px;
+    }
+
+    .eq-block {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .eq-title {
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #8d6e63;
+      border-bottom: 1px dashed var(--card-border);
+      padding-bottom: 2px;
+    }
+
+    .eq-btn-grid {
+      display: grid;
+      gap: 6px;
+      height: 100%;
+    }
+
+    .eq-btn-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .eq-btn-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .item-btn {
+      background: #fffdfa;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .item-btn:hover {
+      transform: translateY(-2px);
+      border-color: #d84315;
+      background: #fff8e1;
+    }
+
+    .item-btn-label {
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    /* 主網格 Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .left-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+
+    .workspace-split {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* 備料台 */
+    .mise-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .panel-title { font-size: 0.78rem; font-weight: 900; color: var(--text-main); }
+
+    .prep-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      flex: 1;
+      overflow-y: auto;
+      align-content: start;
+    }
+
+    .prep-item-card {
+      background: var(--bg-main);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+      font-size: 0.68rem;
+      font-weight: bold;
+    }
+
+    .prep-item-remove {
+      position: absolute;
+      top: 1px; right: 2px;
+      color: #e53935;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+
+    .btn-clear-prep {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #ffcc80;
+      background: #fff8e1;
+      color: #e65100;
+      font-size: 0.7rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* 中央質感作業區 */
+    .center-stage-v2 {
+      background: #fdfbf7;
+      border: 1.5px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 20px 10px 20px;
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr;
+      align-items: center;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .shaker-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .column-title {
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: #8d6e63;
+      text-align: center;
+    }
+
+    /* 刻度雪克杯 */
+    .graduated-shaker {
+      width: 100px;
+      height: 165px;
+      border: 3.5px solid #bba891;
+      border-radius: 6px 6px 14px 14px;
+      background: #f5efe6;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column-reverse;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.04);
+      transition: transform 0.2s;
+    }
+
+    .graduated-shaker.shaking-anim {
+      animation: shakeAnim 0.3s ease-in-out infinite;
+    }
+
+    @keyframes shakeAnim {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(-8px, -5px) rotate(-12deg); }
+      50% { transform: translate(8px, 5px) rotate(12deg); }
+      75% { transform: translate(-5px, 8px) rotate(-8deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    .graduated-shaker.pouring-right {
+      transform: rotate(75deg) translate(35px, -15px);
+    }
+
+    .shaker-liquid-fill {
+      width: 100%;
+      height: 0%;
+      transition: height 0.3s, background-color 0.3s;
+      position: relative;
+    }
+
+    /* 刻度線標示 */
+    .grad-ticks {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 10px;
+      z-index: 5;
+    }
+
+    .tick-line {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 900;
+      color: #8d6e63;
+      opacity: 0.8;
+    }
+
+    .tick-line::after {
+      content: '';
+      width: 8px;
+      height: 2px;
+      background: #8d6e63;
+    }
+
+    /* 中間箭頭 */
+    .arrow-divider {
+      font-size: 1.5rem;
+      color: #d7ccc8;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* 封口交付區 + 封口機頭 */
+    .sealer-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .commercial-machine-head {
+      width: 140px;
+      height: 22px;
+      background: #546e7a;
+      border: 3px solid #37474f;
+      border-radius: 6px;
+      position: relative;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+
+    .commercial-machine-head::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 12px;
+      width: 110px;
+      height: 6px;
+      background: #a1887f;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .machine-light {
+      width: 8px;
+      height: 8px;
+      background: #81c784;
+      border-radius: 50%;
+      border: 1px solid #2e7d32;
+    }
+
+    /* 實體客杯 */
+    .graduated-real-cup {
+      width: 90px;
+      height: 145px;
+      border: 3.5px solid #bba891;
+      border-radius: 4px 4px 18px 18px;
+      background: #fdfbf7;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column-reverse;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: height 0.3s;
+    }
+
+    .graduated-real-cup.medium-size { height: 115px; }
+
+    .cup-liquid-fill {
+      width: 100%;
+      height: 0%;
+      transition: height 0.4s, background-color 0.3s;
+      position: relative;
+    }
+
+    .cup-topping-layer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap-reverse;
+      gap: 2px;
+      padding: 4px;
+      z-index: 2;
+    }
+
+    .cup-milk-cap {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 0%;
+      background: #fffde7;
+      border-bottom: 2px solid #fff59d;
+      transition: height 0.3s;
+      z-index: 3;
+    }
+
+    .cup-seal-film {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: #e53935;
+      border-bottom: 1.5px solid #b71c1c;
+      display: none;
+      z-index: 10;
+    }
+
+    .cup-straw {
+      position: absolute;
+      top: -10px;
+      right: 22px;
+      width: 6px;
+      height: 150px;
+      background: #29b6f6;
+      transform: rotate(8deg);
+      display: none;
+      z-index: 11;
+      border-radius: 2px;
+      box-shadow: -1px 0 2px rgba(0,0,0,0.15);
+    }
+
+    /* 4動作按鈕列 */
+    .action-button-row-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1.2fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-style-shake {
+      background: #8e24aa;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+      transition: all 0.15s;
+    }
+
+    .btn-style-pour {
+      background: #78909c;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+      transition: all 0.15s;
+    }
+
+    .btn-style-seal {
+      background: #d7ccc8;
+      color: #4e342e;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+      transition: all 0.15s;
+    }
+
+    .btn-style-serve {
+      background: #81c784;
+      color: #1b5e20;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-weight: 900;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+      transition: all 0.15s;
+    }
+
+    .btn-style-shake:hover, .btn-style-pour:hover, .btn-style-seal:hover, .btn-style-serve:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    /* 大型配料區 */
+    .expanded-toppings-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: var(--shadow-soft);
+      height: 110px;
+    }
+
+    .topping-grid-expanded {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      height: 100%;
+    }
+
+    .topping-card-lg {
+      background: #fffdfa;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .topping-card-lg:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-orange);
+      background: #fff8e1;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    }
+
+    /* 右側 Sidebars */
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+    }
+
+    .side-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .side-header { font-size: 0.68rem; font-weight: 800; color: #b18972; letter-spacing: 1px; }
+    .mission-title { font-size: 0.98rem; font-weight: 900; color: var(--text-main); }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #616161;
+      padding: 4px 6px;
+      border-radius: 6px;
+      background: var(--bg-main);
+    }
+
+    .task-item.checked {
+      color: var(--accent-green);
+      background: #e8f5e9;
+      font-weight: bold;
+    }
+
+    .task-circle {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid #bdbdbd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .task-item.checked .task-circle {
+      background: #43a047;
+      border-color: #43a047;
+      color: #fff;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: bold;
+    }
+
+    .data-val { font-size: 0.95rem; color: var(--text-main); }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-orange);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* Modal */
+    .pop-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(62, 39, 35, 0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .pop-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .pop-title {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--text-main);
+      border-bottom: 1px dashed var(--card-border);
+      padding-bottom: 6px;
+    }
+
+    .pop-btn-grid { display: flex; flex-direction: column; gap: 6px; }
+
+    .pop-opt-btn {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: var(--bg-main);
+      font-weight: bold;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .pop-opt-btn:hover {
+      background: #fbe9e7;
+      color: #d84315;
+      border-color: #ffab91;
+    }
+
+    .dot-item { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-boba { background: #211510; }
+    .dot-jelly { background: #fffde7; border: 1px solid #ffe082; }
+    .dot-taro { background: #b39ddb; }
+    .dot-pudding { background: #ffee58; border-bottom: 2px solid #5d4037; }
+    .dot-grass { background: #263238; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 首頁 Game Home Screen -->
+  <div class="home-screen" id="homeScreen">
+    <div style="font-size:3rem;">🧋</div>
+    <div>
+      <div class="home-title">寶島手搖調飲店</div>
+      <div class="home-subtitle">BOBA SHOP MANAGEMENT</div>
+    </div>
+
+    <div class="home-stats-card">
+      <div class="home-stat-box">
+        <div class="home-stat-label">當前天數</div>
+        <div class="home-stat-val" id="homeDayText">第 1 天</div>
+      </div>
+      <div class="home-stat-box">
+        <div class="home-stat-label">累積總收益</div>
+        <div class="home-stat-val" id="homeTotalMoney">$0</div>
+      </div>
+      <div class="home-stat-box">
+        <div class="home-stat-label">平均滿意度</div>
+        <div class="home-stat-val" style="color:#2e7d32;" id="homeSatisfactionText">100%</div>
+      </div>
+    </div>
+
+    <button class="btn-start-game" onclick="startGame()">開店營業 🚀</button>
+    <button class="btn-reset-data" onclick="resetCampaignData()">重置營運紀錄</button>
+  </div>
+
+
+  <!-- 2. 主製作區域 App Main Container -->
+  <div class="app-container" id="appContainer">
+
+    <!-- 頂部 Header -->
+    <div class="header-bar">
+      <div>
+        <div class="level-badge" id="dayBadge">DAY 1 · 營業中</div>
+        <div class="main-title">寶島手搖調飲店 🧋</div>
+      </div>
+
+      <div class="stats-group">
+        <!-- 跑動的時間顯示 -->
+        <div class="time-badge" id="clockText">10:00 AM</div>
+
+        <div class="stat-badge">本日收益: <span id="statMoney">$0</span></div>
+        <div class="stat-badge">滿意度: <span id="statSatisfaction">100%</span></div>
+        <div class="stat-badge">完成杯數: <span id="statCups">0</span> 杯</div>
+      </div>
+    </div>
+
+    <!-- 顧客點單看板 -->
+    <div class="customer-card">
+      <div class="cust-info">
+        <div class="cust-avatar" id="custFace">😀</div>
+        <div>
+          <div class="order-speech" id="orderTitle">載入點單中...</div>
+          <div class="order-sub-req" id="orderDetailReq">精確要求：載入中...</div>
+        </div>
+      </div>
+
+      <div class="patience-box">
+        <div class="patience-label">顧客耐心值</div>
+        <div class="patience-bar-bg">
+          <div class="patience-bar-fill" id="patienceFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 吧檯設備區 -->
+    <div class="equipment-sections">
+
+      <!-- 茶湯保溫桶 -->
+      <div class="eq-block">
+        <div class="eq-title">🫖 不銹鋼茶湯桶 (選擇容量: 中杯/大杯)</div>
+        <div class="eq-btn-grid cols-4">
+          <div class="item-btn" onclick="openDrinkModal('阿薩姆紅茶', '#a13d2d')">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="10" y="8" width="20" height="22" rx="4" fill="#b0bec5" stroke="#37474f" stroke-width="1.5"/>
+              <rect x="12" y="10" width="16" height="18" rx="2" fill="#d32f2f"/>
+              <rect x="16" y="3" width="8" height="5" rx="1" fill="#455a64"/>
+              <path d="M 18 30 L 18 35 L 22 35" stroke="#d32f2f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="item-btn-label">阿薩姆紅茶</div>
+          </div>
+          <div class="item-btn" onclick="openDrinkModal('茉莉綠茶', '#8bc34a')">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="10" y="8" width="20" height="22" rx="4" fill="#b0bec5" stroke="#37474f" stroke-width="1.5"/>
+              <rect x="12" y="10" width="16" height="18" rx="2" fill="#388e3c"/>
+              <rect x="16" y="3" width="8" height="5" rx="1" fill="#455a64"/>
+              <path d="M 18 30 L 18 35 L 22 35" stroke="#388e3c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="item-btn-label">茉莉綠茶</div>
+          </div>
+          <div class="item-btn" onclick="openDrinkModal('凍頂烏龍', '#d4a373')">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="10" y="8" width="20" height="22" rx="4" fill="#b0bec5" stroke="#37474f" stroke-width="1.5"/>
+              <rect x="12" y="10" width="16" height="18" rx="2" fill="#f57c00"/>
+              <rect x="16" y="3" width="8" height="5" rx="1" fill="#455a64"/>
+              <path d="M 18 30 L 18 35 L 22 35" stroke="#f57c00" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="item-btn-label">凍頂烏龍</div>
+          </div>
+          <div class="item-btn" onclick="openDrinkModal('四季春茶', '#c0ca33')">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="10" y="8" width="20" height="22" rx="4" fill="#b0bec5" stroke="#37474f" stroke-width="1.5"/>
+              <rect x="12" y="10" width="16" height="18" rx="2" fill="#afb42b"/>
+              <rect x="16" y="3" width="8" height="5" rx="1" fill="#455a64"/>
+              <path d="M 18 30 L 18 35 L 22 35" stroke="#afb42b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            </svg>
+            <div class="item-btn-label">四季春茶</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 乳品區 -->
+      <div class="eq-block">
+        <div class="eq-title">🥛 乳品區</div>
+        <div class="eq-btn-grid cols-2">
+          <div class="item-btn" onclick="openMilkModal('優質鮮奶', '#ffffff')">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <path d="M 13 12 L 20 6 L 27 12 L 27 34 L 13 34 Z" fill="#ffffff" stroke="#1565c0" stroke-width="1.5"/>
+              <path d="M 13 18 L 27 18 L 27 26 L 13 26 Z" fill="#1e88e5"/>
+            </svg>
+            <div class="item-btn-label">優質鮮奶</div>
+          </div>
+          <div class="item-btn" onclick="openMilkModal('養樂多', '#ffcc80')">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="15" y="6" width="10" height="4" rx="1" fill="#e53935"/>
+              <path d="M 14 10 L 26 10 L 24 16 L 26 32 Q 20 35 14 32 L 16 16 Z" fill="#ffb74d" stroke="#e65100" stroke-width="1.2"/>
+            </svg>
+            <div class="item-btn-label">養樂多</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 糖漿定量機與冰槽 -->
+      <div class="eq-block">
+        <div class="eq-title">🍯 果糖機 & 🧊 冰槽</div>
+        <div class="eq-btn-grid cols-2">
+          <div class="item-btn" onclick="openSugarModal()">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="10" y="12" width="20" height="20" rx="3" fill="#ffb74d" stroke="#f57c00" stroke-width="1.5"/>
+              <rect x="13" y="15" width="14" height="6" fill="#37474f"/>
+              <rect x="18" y="4" width="4" height="8" fill="#757575"/>
+            </svg>
+            <div class="item-btn-label">果糖定量機</div>
+          </div>
+          <div class="item-btn" onclick="openIceModal()">
+            <svg width="30" height="30" viewBox="0 0 40 40">
+              <rect x="8" y="12" width="24" height="18" rx="3" fill="#b0bec5" stroke="#37474f" stroke-width="1.5"/>
+              <rect x="11" y="15" width="18" height="12" fill="#29b6f6"/>
+              <rect x="13" y="17" width="5" height="5" rx="1" fill="#ffffff" opacity="0.9"/>
+            </svg>
+            <div class="item-btn-label">冰塊槽</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 工作檯主區域 -->
+    <div class="main-grid">
+
+      <div class="left-section">
+
+        <div class="workspace-split">
+          <!-- 備料台 -->
+          <div class="mise-panel">
+            <div class="panel-title">🧺 調飲備料台</div>
+            <div class="prep-grid" id="prepGrid"></div>
+            <button class="btn-clear-prep" onclick="resetCup()">清空備料</button>
+          </div>
+
+          <!-- 中央作業區 -->
+          <div class="center-stage-v2">
+
+            <!-- 刻度雪克杯 (Graduated Shaker) -->
+            <div class="shaker-column">
+              <div class="column-title">Graduated Shaker (刻度雪克杯)</div>
+              
+              <div class="graduated-shaker" id="shakerGlass">
+                <div class="shaker-liquid-fill" id="shakerLiquid"></div>
+
+                <!-- 刻度標示 -->
+                <div class="grad-ticks">
+                  <div class="tick-line">700ml</div>
+                  <div class="tick-line">500ml</div>
+                  <div class="tick-line">300ml</div>
+                  <div class="tick-line">100ml</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 中間箭頭 -->
+            <div class="arrow-divider">›</div>
+
+            <!-- 商業封口交付區 (Commercial Sealer) -->
+            <div class="sealer-column">
+              <div class="column-title">Commercial Sealer (封口交付區)</div>
+
+              <div class="commercial-machine-head">
+                <div class="machine-light"></div>
+              </div>
+
+              <div class="graduated-real-cup" id="realCup">
+                <div class="cup-seal-film" id="sealFilm"></div>
+                <div class="cup-straw" id="cupStraw"></div>
+                <div class="cup-milk-cap" id="milkCap"></div>
+                <div class="cup-liquid-fill" id="realCupLiquid">
+                  <div class="cup-topping-layer" id="realCupToppings"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 4個完整動作按鈕列：搖勻 ➔ 傾倒 ➔ 封口 ➔ 出飲 -->
+        <div class="action-button-row-4">
+          <button class="btn-style-shake" onclick="shakeShaker()">👋 搖勻雪克</button>
+          <button class="btn-style-pour" onclick="pourToRealCup()">傾倒至客杯 ➔</button>
+          <button class="btn-style-seal" onclick="sealCup()">💿 壓膜封口</button>
+          <button class="btn-style-serve" onclick="serveDrink()">🔔 製作完成出飲</button>
+        </div>
+
+        <!-- 擬真配料區鋼槽 -->
+        <div class="expanded-toppings-section">
+          <div style="font-size:0.8rem; font-weight:900; color:#5d4037;">🥣 配料鋼槽區 (點擊直接舀入實體客用杯)</div>
+
+          <div class="topping-grid-expanded">
+            <!-- 珍珠碗 -->
+            <div class="topping-card-lg" onclick="addTopping('黑糖珍珠')">
+              <svg width="32" height="32" viewBox="0 0 40 40">
+                <ellipse cx="20" cy="25" rx="16" ry="9" fill="#eceff1" stroke="#b0bec5" stroke-width="1.5"/>
+                <ellipse cx="20" cy="22" rx="14" ry="7" fill="#3e2723"/>
+                <circle cx="15" cy="21" r="3" fill="#1b0000"/><circle cx="21" cy="20" r="3" fill="#1b0000"/><circle cx="25" cy="22" r="3" fill="#1b0000"/>
+              </svg>
+              <div style="font-size:0.78rem; font-weight:bold;">黑糖珍珠</div>
+            </div>
+
+            <!-- 椰果碗 -->
+            <div class="topping-card-lg" onclick="addTopping('晶瑩椰果')">
+              <svg width="32" height="32" viewBox="0 0 40 40">
+                <ellipse cx="20" cy="25" rx="16" ry="9" fill="#eceff1" stroke="#b0bec5" stroke-width="1.5"/>
+                <rect x="12" y="18" width="5" height="5" rx="1" fill="#ffffff" stroke="#ffe082"/>
+                <rect x="19" y="17" width="5" height="5" rx="1" fill="#ffffff" stroke="#ffe082"/>
+              </svg>
+              <div style="font-size:0.78rem; font-weight:bold;">晶瑩椰果</div>
+            </div>
+
+            <!-- 芋圓碗 -->
+            <div class="topping-card-lg" onclick="addTopping('雙色芋圓')">
+              <svg width="32" height="32" viewBox="0 0 40 40">
+                <ellipse cx="20" cy="25" rx="16" ry="9" fill="#eceff1" stroke="#b0bec5" stroke-width="1.5"/>
+                <rect x="13" y="18" width="6" height="5" rx="2" fill="#ab47bc"/>
+                <rect x="21" y="17" width="6" height="5" rx="2" fill="#ffa726"/>
+              </svg>
+              <div style="font-size:0.78rem; font-weight:bold;">雙色芋圓</div>
+            </div>
+
+            <!-- 統一布丁 -->
+            <div class="topping-card-lg" onclick="addTopping('統一布丁')">
+              <svg width="32" height="32" viewBox="0 0 40 40">
+                <path d="M 12 28 L 15 15 L 25 15 L 28 28 Z" fill="#ffee58" stroke="#fbc02d" stroke-width="1"/>
+                <path d="M 15 15 L 25 15 L 24 19 L 16 19 Z" fill="#4e342e"/>
+              </svg>
+              <div style="font-size:0.78rem; font-weight:bold;">統一布丁</div>
+            </div>
+
+            <!-- 嫩仙草凍 -->
+            <div class="topping-card-lg" onclick="addTopping('嫩仙草')">
+              <svg width="32" height="32" viewBox="0 0 40 40">
+                <ellipse cx="20" cy="25" rx="16" ry="9" fill="#eceff1" stroke="#b0bec5" stroke-width="1.5"/>
+                <rect x="12" y="17" width="16" height="8" rx="2" fill="#212121"/>
+              </svg>
+              <div style="font-size:0.78rem; font-weight:bold;">嫩仙草凍</div>
+            </div>
+
+            <!-- 濃厚奶蓋 -->
+            <div class="topping-card-lg" onclick="addMilkCap()">
+              <svg width="32" height="32" viewBox="0 0 40 40">
+                <ellipse cx="20" cy="24" rx="15" ry="8" fill="#fffde7" stroke="#fff59d" stroke-width="2"/>
+                <path d="M 8 22 Q 20 14 32 22 Q 20 28 8 22 Z" fill="#ffffff"/>
+              </svg>
+              <div style="font-size:0.78rem; font-weight:bold;">濃厚奶蓋</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 右欄：精確 8 步驟 SOP 清單 -->
+      <div class="right-sidebar">
+
+        <div class="side-card" style="flex:1; min-height:0;">
+          <div class="side-header">PRECISE SOP CHECKLIST</div>
+          <div class="mission-title" id="missionTitle">顧客點單與精確 SOP</div>
+          
+          <div class="task-list" id="taskList"></div>
+        </div>
+
+        <div class="side-card">
+          <div class="side-header">LIVE STATUS · 即時數據</div>
+
+          <div class="data-row">
+            <span>雪克杯總容量</span>
+            <span class="data-val"><span id="dataVol">0</span> mL</span>
+          </div>
+
+          <div class="data-row" style="margin-top:4px;">
+            <span>果糖定量</span>
+            <span class="data-val"><span id="dataSugar">0</span> cc</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="barSugar"></div>
+          </div>
+
+          <div class="data-row" style="margin-top:4px;">
+            <span>冰塊量</span>
+            <span class="data-val"><span id="dataIce">0</span> 鏟</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="barIce" style="background:#29b6f6;"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- 選項 Modal -->
+  <div class="pop-overlay" id="popModal">
+    <div class="pop-card">
+      <div class="pop-title" id="popTitle">選擇設定</div>
+      <div class="pop-btn-grid" id="popGrid"></div>
+      <button class="btn-act" style="background:#757575; justify-content:center; margin-top:6px; border:none; color:#fff; font-weight:bold; padding:8px; border-radius:6px; cursor:pointer;" onclick="closePopModal()">關閉</button>
+    </div>
+  </div>
+
+  <!-- 出茶評分 / 生氣離場 Modal -->
+  <div class="pop-overlay" id="scoreModal">
+    <div class="pop-card">
+      <div class="pop-title" id="modalHeaderTitle">出茶評分報告</div>
+      <div style="font-size:2.5rem; font-weight:900; color:#d84315;" id="modalScore">100 分</div>
+      <div id="modalMsg" style="text-align:left; font-size:0.8rem; background:#f5f5f5; padding:8px; border-radius:6px; line-height:1.4;"></div>
+      <button class="btn-act" style="width:100%; background:#81c784; color:#1b5e20; border:none; font-weight:bold; padding:10px; border-radius:8px; cursor:pointer;" onclick="nextCustomer()">服務下一位顧客 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 每日打烊結算 Modal -->
+  <div class="pop-overlay" id="daySummaryModal">
+    <div class="pop-card">
+      <div class="pop-title" id="summaryTitle">🌙 第 1 天打烊結算</div>
+      <div style="text-align:left; font-size:0.85rem; background:#f5f5f5; padding:12px; border-radius:8px; line-height:1.6;">
+        <div>今日總營運時間: <b>10:00 AM - 08:00 PM</b></div>
+        <div>今日完成杯數: <b style="color:#d84315; font-size:1.1rem;" id="sumDayCups">0</b> 杯</div>
+        <div>今日營運收入: <b style="color:#e65100;" id="sumDayMoney">$0</b></div>
+        <div>顧客平均滿意度: <b style="color:#2e7d32;" id="sumDaySatisfaction">100%</b></div>
+        <hr style="border:none; border-top:1px dashed #ccc; margin:8px 0;">
+        <div>累積總營運金額: <b style="color:#d84315;" id="sumTotalMoney">$0</b></div>
+      </div>
+      <button class="btn-act" style="width:100%; background:#e65100; color:#fff; border:none; font-weight:bold; padding:12px; border-radius:8px; cursor:pointer;" onclick="startNextDay()">開啟下一天營業 ☀️</button>
+    </div>
+  </div>
+
+  <script>
+    const drinkRecipes = [
+      {
+        name: '布丁仙草奶茶',
+        size: '大杯 (L)',
+        teaName: '阿薩姆紅茶',
+        needMilk: true,
+        milkVol: 100,
+        sugarCc: 30,
+        sugarName: '少糖',
+        iceScoops: 2,
+        iceName: '少冰',
+        toppings: ['統一布丁', '嫩仙草'],
+        hasCap: false
+      },
+      {
+        name: '經典珍珠奶茶',
+        size: '大杯 (L)',
+        teaName: '阿薩姆紅茶',
+        needMilk: true,
+        milkVol: 100,
+        sugarCc: 20,
+        sugarName: '半糖',
+        iceScoops: 2,
+        iceName: '少冰',
+        toppings: ['黑糖珍珠'],
+        hasCap: false
+      },
+      {
+        name: '茉莉鮮奶綠',
+        size: '中杯 (M)',
+        teaName: '茉莉綠茶',
+        needMilk: true,
+        milkVol: 100,
+        sugarCc: 10,
+        sugarName: '微糖',
+        iceScoops: 1,
+        iceName: '微冰',
+        toppings: [],
+        hasCap: false
+      },
+      {
+        name: '四季春奶蓋茶',
+        size: '大杯 (L)',
+        teaName: '四季春茶',
+        needMilk: false,
+        sugarCc: 10,
+        sugarName: '微糖',
+        iceScoops: 1,
+        iceName: '微冰',
+        toppings: [],
+        hasCap: true
+      }
+    ];
+
+    // 全域營運數據
+    let campaign = {
+      day: 1,
+      totalMoney: 0,
+      satisfaction: 100,
+      todayMoney: 0,
+      todayCups: 0
+    };
+
+    // 時間倒數系統變數 (10:00 AM -> 20:00 PM)
+    let gameClockTimer = null;
+    let currentMinutes = 10 * 60; // 10:00 AM
+    const END_MINUTES = 20 * 60;  // 08:00 PM
+
+    let currentOrder = {};
+    let patience = 100;
+    let patienceTimer = null;
+
+    let playerState = {
+      cupSize: '',
+      teaName: '',
+      teaVol: 0,
+      teaColor: '#a13d2d',
+      milkVol: 0,
+      sugarCc: 0,
+      iceScoops: 0,
+      toppings: [],
+      hasMilkCap: false,
+      isShaked: false,
+      isPoured: false,
+      isSealed: false
+    };
+
+    let prepItems = [];
+
+    window.onload = () => {
+      loadCampaignData();
+      renderHomeScreen();
+    };
+
+    /* 首頁與天數邏輯 */
+    function renderHomeScreen() {
+      document.getElementById('homeDayText').innerText = `第 ${campaign.day} 天`;
+      document.getElementById('homeTotalMoney').innerText = `$${campaign.totalMoney}`;
+      document.getElementById('homeSatisfactionText').innerText = `${campaign.satisfaction}%`;
+    }
+
+    function startGame() {
+      document.getElementById('homeScreen').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'flex';
+      
+      campaign.todayMoney = 0;
+      campaign.todayCups = 0;
+
+      // 重置時間為 10:00 AM
+      currentMinutes = 10 * 60;
+      updateClockUI();
+
+      // 啟動時間流逝 (每 0.2 秒增加 1 分鐘遊戲時間)
+      clearInterval(gameClockTimer);
+      gameClockTimer = setInterval(() => {
+        currentMinutes += 1;
+        updateClockUI();
+
+        if (currentMinutes >= END_MINUTES) {
+          clearInterval(gameClockTimer);
+          finishCurrentDay();
+        }
+      }, 200);
+
+      updateHeaderStats();
+      newCustomer();
+    }
+
+    function updateClockUI() {
+      let hours = Math.floor(currentMinutes / 60);
+      let mins = currentMinutes % 60;
+      let ampm = hours >= 12 ? 'PM' : 'AM';
+      let displayHours = hours > 12 ? hours - 12 : hours;
+      if (displayHours === 0) displayHours = 12;
+
+      let timeStr = `${displayHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')} ${ampm}`;
+      document.getElementById('clockText').innerText = timeStr;
+    }
+
+    function finishCurrentDay() {
+      clearInterval(patienceTimer);
+      clearInterval(gameClockTimer);
+
+      document.getElementById('summaryTitle').innerText = `🌙 第 ${campaign.day} 天打烊結算`;
+      document.getElementById('sumDayMoney').innerText = `$${campaign.todayMoney}`;
+      document.getElementById('sumDayCups').innerText = campaign.todayCups;
+      document.getElementById('sumDaySatisfaction').innerText = `${campaign.satisfaction}%`;
+      document.getElementById('sumTotalMoney').innerText = `$${campaign.totalMoney}`;
+
+      document.getElementById('daySummaryModal').style.display = 'flex';
+    }
+
+    function startNextDay() {
+      document.getElementById('daySummaryModal').style.display = 'none';
+      campaign.day += 1;
+      saveCampaignData();
+
+      document.getElementById('appContainer').style.display = 'none';
+      document.getElementById('homeScreen').style.display = 'flex';
+      renderHomeScreen();
+    }
+
+    function saveCampaignData() {
+      localStorage.setItem('boba_campaign_data', JSON.stringify({
+        day: campaign.day,
+        totalMoney: campaign.totalMoney,
+        satisfaction: campaign.satisfaction
+      }));
+    }
+
+    function loadCampaignData() {
+      const saved = localStorage.getItem('boba_campaign_data');
+      if (saved) {
+        const data = JSON.parse(saved);
+        campaign.day = data.day || 1;
+        campaign.totalMoney = data.totalMoney || 0;
+        campaign.satisfaction = data.satisfaction || 100;
+      }
+    }
+
+    function resetCampaignData() {
+      if (confirm('確定要清空所有營運天數與總收益嗎？')) {
+        localStorage.removeItem('boba_campaign_data');
+        campaign.day = 1;
+        campaign.totalMoney = 0;
+        campaign.satisfaction = 100;
+        renderHomeScreen();
+      }
+    }
+
+    /* 顧客與遊戲製作邏輯 */
+    function newCustomer() {
+      currentOrder = drinkRecipes[Math.floor(Math.random() * drinkRecipes.length)];
+
+      document.getElementById('orderTitle').innerText = `我要一杯【${currentOrder.size} ${currentOrder.name}】`;
+      let reqStr = `${currentOrder.sugarName} / ${currentOrder.iceName}`;
+      if (currentOrder.toppings.length > 0) reqStr += ` / 加${currentOrder.toppings.join('、')}`;
+      if (currentOrder.hasCap) reqStr += ` / 淋奶蓋`;
+      document.getElementById('orderDetailReq').innerText = `精確要求：${reqStr}`;
+
+      patience = 100;
+      updatePatienceUI();
+      clearInterval(patienceTimer);
+      patienceTimer = setInterval(() => {
+        patience -= 1;
+        updatePatienceUI();
+        if (patience <= 0) {
+          clearInterval(patienceTimer);
+          campaign.satisfaction = Math.max(0, campaign.satisfaction - 15);
+          updateHeaderStats();
+          showAngerModal();
+        }
+      }, 500);
+
+      resetCup();
+    }
+
+    function showAngerModal() {
+      document.getElementById('modalHeaderTitle').innerText = '顧客離開提示';
+      document.getElementById('modalScore').innerText = '0 分';
+      document.getElementById('modalMsg').innerHTML = '😠 顧客久等生氣離開店面了！滿意度下降';
+      document.getElementById('scoreModal').style.display = 'flex';
+    }
+
+    function updatePatienceUI() {
+      const fill = document.getElementById('patienceFill');
+      fill.style.width = patience + '%';
+      const face = document.getElementById('custFace');
+      if (patience > 70) { fill.style.backgroundColor = '#43a047'; face.innerText = '😀'; }
+      else if (patience > 30) { fill.style.backgroundColor = '#fb8c00'; face.innerText = '😐'; }
+      else { fill.style.backgroundColor = '#e53935'; face.innerText = '😠'; }
+    }
+
+    function updateTasks() {
+      const list = document.getElementById('taskList');
+      
+      const reqTeaVol = currentOrder.size === '大杯 (L)' ? 350 : 200;
+      let toppingText = currentOrder.toppings.join(' + ') || '無配料';
+      if (currentOrder.hasCap) toppingText += (currentOrder.toppings.length ? ' + ' : '') + '濃厚奶蓋';
+
+      const tasks = [
+        { name: `1. 指定杯型：${currentOrder.size}`, done: playerState.cupSize === currentOrder.size },
+        { name: `2. 客杯加料：${toppingText}`, done: checkToppingsMatch() },
+        { name: `3. 注入茶湯：${currentOrder.teaName} (${reqTeaVol}mL)`, done: playerState.teaName === currentOrder.teaName && playerState.teaVol >= reqTeaVol },
+        { name: `4. 乳品調和：${currentOrder.needMilk ? `加入鮮奶 (${currentOrder.milkVol}mL)` : '不需加鮮奶'}`, done: currentOrder.needMilk ? playerState.milkVol === currentOrder.milkVol : playerState.milkVol === 0 },
+        { name: `5. 定量果糖：${currentOrder.sugarName} (${currentOrder.sugarCc}cc)`, done: playerState.sugarCc === currentOrder.sugarCc },
+        { name: `6. 加入冰塊：${currentOrder.iceName} (${currentOrder.iceScoops}鏟)`, done: playerState.iceScoops === currentOrder.iceScoops },
+        { name: `7. 搖勻與傾倒：雪克並倒至客杯`, done: playerState.isShaked && playerState.isPoured },
+        { name: `8. 封口壓膜：完成商業壓膜`, done: playerState.isSealed }
+      ];
+
+      list.innerHTML = tasks.map(t => `
+        <div class="task-item ${t.done ? 'checked' : ''}">
+          <div class="task-circle">${t.done ? '✓' : ''}</div>
+          <span>${t.name}</span>
+        </div>
+      `).join('');
+    }
+
+    function checkToppingsMatch() {
+      const t1 = [...playerState.toppings].sort().join(',');
+      const t2 = [...currentOrder.toppings].sort().join(',');
+      return t1 === t2 && playerState.hasMilkCap === currentOrder.hasCap;
+    }
+
+    function openDrinkModal(teaName, color) {
+      const modal = document.getElementById('popModal');
+      const title = document.getElementById('popTitle');
+      const grid = document.getElementById('popGrid');
+      title.innerText = `選擇 ${teaName} 容量`;
+      grid.innerHTML = '';
+
+      ['中杯 (M / 200mL)', '大杯 (L / 350mL)'].forEach(sizeStr => {
+        grid.appendChild(createOptBtn(sizeStr, () => {
+          const isL = sizeStr.includes('大杯');
+          playerState.cupSize = isL ? '大杯 (L)' : '中杯 (M)';
+          playerState.teaName = teaName;
+          playerState.teaColor = color;
+          playerState.teaVol = isL ? 350 : 200;
+
+          const cup = document.getElementById('realCup');
+          if (isL) {
+            cup.classList.remove('medium-size');
+          } else {
+            cup.classList.add('medium-size');
+          }
+
+          addPrepItem('🫖', `${teaName} (${playerState.cupSize})`);
+          updateShakerUI();
+          closePopModal();
+        }));
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function openMilkModal(milkName, color) {
+      const modal = document.getElementById('popModal');
+      const title = document.getElementById('popTitle');
+      const grid = document.getElementById('popGrid');
+      title.innerText = `選擇 ${milkName} 添加份量`;
+      grid.innerHTML = '';
+
+      [
+        { label: '少量 (50mL)', vol: 50 },
+        { label: '正常 (100mL)', vol: 100 },
+        { label: '濃郁大量 (150mL)', vol: 150 }
+      ].forEach(m => {
+        grid.appendChild(createOptBtn(m.label, () => {
+          playerState.milkVol = m.vol;
+          playerState.teaVol += m.vol;
+          playerState.teaColor = '#d7ccc8';
+          addPrepItem('🥛', `${milkName} ${m.vol}mL`);
+          updateShakerUI();
+          closePopModal();
+        }));
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function openSugarModal() {
+      const modal = document.getElementById('popModal');
+      const title = document.getElementById('popTitle');
+      const grid = document.getElementById('popGrid');
+      title.innerText = '選擇果糖定量';
+      grid.innerHTML = '';
+
+      [
+        { label: '無糖 (0cc)', cc: 0 },
+        { label: '微糖 (10cc)', cc: 10 },
+        { label: '半糖 (20cc)', cc: 20 },
+        { label: '少糖 (30cc)', cc: 30 },
+        { label: '全糖 (40cc)', cc: 40 }
+      ].forEach(s => {
+        grid.appendChild(createOptBtn(s.label, () => {
+          playerState.sugarCc = s.cc;
+          addPrepItem('🍯', `果糖 ${s.cc}cc`);
+          updateDataUI();
+          closePopModal();
+        }));
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function openIceModal() {
+      const modal = document.getElementById('popModal');
+      const title = document.getElementById('popTitle');
+      const grid = document.getElementById('popGrid');
+      title.innerText = '選擇冰塊鏟數';
+      grid.innerHTML = '';
+
+      [
+        { label: '去冰 (0鏟)', scoops: 0 },
+        { label: '微冰 (1鏟)', scoops: 1 },
+        { label: '少冰 (2鏟)', scoops: 2 },
+        { label: '正常冰 (3鏟)', scoops: 3 }
+      ].forEach(i => {
+        grid.appendChild(createOptBtn(i.label, () => {
+          playerState.iceScoops = i.scoops;
+          addPrepItem('🧊', `冰塊 ${i.scoops}鏟`);
+          updateDataUI();
+          closePopModal();
+        }));
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function addTopping(topName) {
+      playerState.toppings.push(topName);
+      const layer = document.getElementById('realCupToppings');
+      for(let i=0; i<4; i++) {
+        const dot = document.createElement('div');
+        if (topName === '黑糖珍珠') dot.className = 'dot-item dot-boba';
+        else if (topName === '晶瑩椰果') dot.className = 'dot-item dot-jelly';
+        else if (topName === '雙色芋圓') dot.className = 'dot-item dot-taro';
+        else if (topName === '統一布丁') dot.className = 'dot-item dot-pudding';
+        else dot.className = 'dot-item dot-grass';
+        layer.appendChild(dot);
+      }
+      addPrepItem('🥣', topName);
+      updateTasks();
+    }
+
+    function addMilkCap() {
+      playerState.hasMilkCap = true;
+      document.getElementById('milkCap').style.height = '20%';
+      addPrepItem('🥛', '濃厚奶蓋');
+      updateTasks();
+    }
+
+    function createOptBtn(text, onClick) {
+      const btn = document.createElement('button');
+      btn.className = 'pop-opt-btn';
+      btn.innerText = text;
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function closePopModal() { document.getElementById('popModal').style.display = 'none'; }
+
+    function addPrepItem(icon, name) {
+      prepItems.push({ icon, name });
+      renderPrepGrid();
+    }
+
+    function renderPrepGrid() {
+      const grid = document.getElementById('prepGrid');
+      grid.innerHTML = prepItems.map((item, idx) => `
+        <div class="prep-item-card">
+          <span class="prep-item-remove" onclick="removePrepItem(${idx})">×</span>
+          <span style="font-size:1rem;">${item.icon}</span>
+          <span>${item.name}</span>
+        </div>
+      `).join('');
+    }
+
+    function removePrepItem(idx) {
+      prepItems.splice(idx, 1);
+      renderPrepGrid();
+    }
+
+    function updateShakerUI() {
+      const liquid = document.getElementById('shakerLiquid');
+      liquid.style.backgroundColor = playerState.teaColor;
+      liquid.style.height = Math.min(85, playerState.teaVol / 4.5) + '%';
+      updateDataUI();
+    }
+
+    function updateDataUI() {
+      document.getElementById('dataVol').innerText = playerState.teaVol;
+      document.getElementById('dataSugar').innerText = playerState.sugarCc;
+      document.getElementById('dataIce').innerText = playerState.iceScoops;
+
+      document.getElementById('barSugar').style.width = Math.min(100, (playerState.sugarCc / 40) * 100) + '%';
+      document.getElementById('barIce').style.width = Math.min(100, (playerState.iceScoops / 3) * 100) + '%';
+
+      updateTasks();
+    }
+
+    function shakeShaker() {
+      if (playerState.teaVol === 0) return;
+      const shaker = document.getElementById('shakerGlass');
+      shaker.classList.add('shaking-anim');
+      setTimeout(() => {
+        shaker.classList.remove('shaking-anim');
+        playerState.isShaked = true;
+        updateTasks();
+      }, 600);
+    }
+
+    function pourToRealCup() {
+      if (playerState.teaVol === 0) return;
+      const shaker = document.getElementById('shakerGlass');
+      shaker.classList.add('pouring-right');
+
+      setTimeout(() => {
+        const liquid = document.getElementById('realCupLiquid');
+        liquid.style.backgroundColor = playerState.teaColor;
+        liquid.style.height = '82%';
+
+        document.getElementById('shakerLiquid').style.height = '0%';
+
+        shaker.classList.remove('pouring-right');
+        playerState.isPoured = true;
+        updateTasks();
+      }, 350);
+    }
+
+    function sealCup() {
+      if (!playerState.isPoured) return;
+      document.getElementById('sealFilm').style.display = 'block';
+      document.getElementById('cupStraw').style.display = 'block';
+      playerState.isSealed = true;
+      updateTasks();
+    }
+
+    function serveDrink() {
+      clearInterval(patienceTimer);
+      let score = 100;
+      let msg = [];
+
+      if (playerState.cupSize !== currentOrder.size) { score -= 15; msg.push(`❌ 杯型錯誤 (${currentOrder.size})`); }
+      if (playerState.teaName !== currentOrder.teaName) { score -= 25; msg.push(`❌ 茶底選錯 (${currentOrder.teaName})`); }
+      if (currentOrder.needMilk && playerState.milkVol === 0) { score -= 20; msg.push(`❌ 未加入鮮奶`); }
+      if (playerState.sugarCc !== currentOrder.sugarCc) { score -= 15; msg.push(`❌ 甜度不符 (${currentOrder.sugarName})`); }
+      if (playerState.iceScoops !== currentOrder.iceScoops) { score -= 15; msg.push(`❌ 冰量不符 (${currentOrder.iceName})`); }
+
+      if (!checkToppingsMatch()) { score -= 20; msg.push(`❌ 配料/奶蓋不符合 SOP`); }
+      if (!playerState.isShaked) { score -= 10; msg.push(`⚠️ 雪克杯未搖勻`); }
+      if (!playerState.isSealed) { score -= 15; msg.push(`⚠️ 未進行商業壓膜封口`); }
+
+      if (score === 100) msg.push("🎉 完美製作！顧客非常滿意！");
+      if (score < 0) score = 0;
+
+      const earned = Math.floor(65 * (score / 100));
+      campaign.todayMoney += earned;
+      campaign.totalMoney += earned;
+      campaign.satisfaction = Math.floor((campaign.satisfaction + score) / 2);
+      campaign.todayCups += 1;
+
+      saveCampaignData();
+      updateHeaderStats();
+
+      document.getElementById('modalHeaderTitle').innerText = '出茶評分報告';
+      document.getElementById('modalScore').innerText = `${score} 分`;
+      document.getElementById('modalMsg').innerHTML = msg.join('<br>') || "完美無瑕！";
+      document.getElementById('scoreModal').style.display = 'flex';
+    }
+
+    function nextCustomer() {
+      document.getElementById('scoreModal').style.display = 'none';
+      newCustomer();
+    }
+
+    function updateHeaderStats() {
+      document.getElementById('dayBadge').innerText = `DAY ${campaign.day} · 營業中`;
+      document.getElementById('statMoney').innerText = `$${campaign.todayMoney}`;
+      document.getElementById('statSatisfaction').innerText = `${campaign.satisfaction}%`;
+      document.getElementById('statCups').innerText = campaign.todayCups;
+    }
+
+    function resetCup() {
+      playerState = {
+        cupSize: '', teaName: '', teaVol: 0, teaColor: '#a13d2d',
+        milkVol: 0, sugarCc: 0, iceScoops: 0, toppings: [],
+        hasMilkCap: false, isShaked: false, isPoured: false, isSealed: false
+      };
+
+      prepItems = [];
+      renderPrepGrid();
+
+      document.getElementById('shakerLiquid').style.height = '0%';
+
+      const cup = document.getElementById('realCup');
+      cup.classList.remove('medium-size');
+
+      document.getElementById('realCupLiquid').style.height = '0%';
+      document.getElementById('realCupLiquid').style.backgroundColor = 'transparent';
+      document.getElementById('realCupToppings').innerHTML = '';
+      document.getElementById('milkCap').style.height = '0%';
+      document.getElementById('sealFilm').style.display = 'none';
+      document.getElementById('cupStraw').style.display = 'none';
+
+      updateDataUI();
+    }
+  </script>
+</body>
+</html>
