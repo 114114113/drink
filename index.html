@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧋 寶島手搖調飲大師 — 擬真音效版</title>
+  <title>🧋 寶島手搖調飲大師 — 超擬真音效版</title>
   <style>
     :root {
       --bg-main: #fbf8f3;
@@ -403,7 +403,7 @@
       cursor: pointer;
     }
 
-    /* 中央質感作業區 */
+    /* 中央作業區 */
     .center-stage-v2 {
       background: #fdfbf7;
       border: 1.5px solid var(--card-border);
@@ -700,7 +700,7 @@
       filter: brightness(1.05);
     }
 
-    /* 大型配料區 */
+    /* 配料鋼槽區 */
     .expanded-toppings-section {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -1114,7 +1114,7 @@
           <button class="btn-style-serve" onclick="serveDrink()">🔔 製作完成出飲</button>
         </div>
 
-        <!-- 擬真配料區鋼槽 (維持原樣) -->
+        <!-- 擬真配料區鋼槽 -->
         <div class="expanded-toppings-section">
           <div style="font-size:0.8rem; font-weight:900; color:#5d4037;">🥣 配料鋼槽區 (點擊直接舀入實體客用杯)</div>
 
@@ -1257,7 +1257,7 @@
   </div>
 
   <script>
-    /* 高階 Web Audio 物理擬真音效引擎 */
+    /* 高精細聲學合成音效引擎 */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     function playSound(type) {
@@ -1265,22 +1265,23 @@
       const now = audioCtx.currentTime;
 
       if (type === 'click') {
-        /* 按鈕點擊：輕微木質觸感按壓音 */
+        /* 按鈕輕點音 */
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.03);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.03);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(now);
-        osc.stop(now + 0.04);
+        osc.stop(now + 0.03);
 
       } else if (type === 'pour') {
-        /* 倒液體：動態白噪聲 + 濾波器（模擬水流流動聲） */
-        const bufferSize = audioCtx.sampleRate * 0.35;
+        /* 1. 擬真倒茶/倒液體水聲：帶通濾波白噪聲水流聲 */
+        const duration = 0.45;
+        const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) {
@@ -1292,14 +1293,15 @@
 
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(400, now);
-        filter.frequency.linearRampToValueAtTime(1200, now + 0.35); // 滿杯水音調爬升
-        filter.Q.value = 3.0;
+        // 頻率隨時間上升，模擬杯子水漸滿的水聲
+        filter.frequency.setValueAtTime(500, now);
+        filter.frequency.exponentialRampToValueAtTime(1400, now + duration);
+        filter.Q.value = 4.0;
 
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.01, now);
-        gain.gain.linearRampToValueAtTime(0.2, now + 0.08);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+        gain.gain.linearRampToValueAtTime(0.25, now + 0.08);
+        gain.gain.linearRampToValueAtTime(0.01, now + duration);
 
         noise.connect(filter);
         filter.connect(gain);
@@ -1307,42 +1309,98 @@
         noise.start(now);
 
       } else if (type === 'shake') {
-        /* 雪克搖晃：金屬撞擊 + 冰塊水花混合聲 */
-        for (let i = 0; i < 3; i++) {
-          const delay = now + i * 0.12;
+        /* 2. 擬真雪克搖晃冰塊撞擊聲：多頻率高頻冰塊撞擊 + 水花衝擊聲 */
+        for (let i = 0; i < 4; i++) {
+          const delay = now + i * 0.11;
+          
+          // 冰塊與金屬硬物碰撞的高頻「喀啦」聲
           const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
+          const oscGain = audioCtx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(220 + Math.random() * 100, delay);
-          osc.frequency.exponentialRampToValueAtTime(60, delay + 0.08);
-          gain.gain.setValueAtTime(0.18, delay);
-          gain.gain.exponentialRampToValueAtTime(0.01, delay + 0.08);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
+          osc.frequency.setValueAtTime(1200 + Math.random() * 600, delay);
+          osc.frequency.exponentialRampToValueAtTime(200, delay + 0.06);
+          oscGain.gain.setValueAtTime(0.15, delay);
+          oscGain.gain.exponentialRampToValueAtTime(0.001, delay + 0.06);
+
+          osc.connect(oscGain);
+          oscGain.connect(audioCtx.destination);
           osc.start(delay);
-          osc.stop(delay + 0.08);
+          osc.stop(delay + 0.06);
+
+          // 冰塊間液體水花聲
+          const bufSize = audioCtx.sampleRate * 0.05;
+          const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+          const d = buf.getChannelData(0);
+          for (let j = 0; j < bufSize; j++) d[j] = Math.random() * 2 - 1;
+
+          const n = audioCtx.createBufferSource();
+          n.buffer = buf;
+          const f = audioCtx.createBiquadFilter();
+          f.type = 'bandpass';
+          f.frequency.value = 800 + Math.random() * 400;
+          f.Q.value = 2.0;
+          const g = audioCtx.createGain();
+          g.gain.setValueAtTime(0.12, delay);
+          g.gain.linearRampToValueAtTime(0.01, delay + 0.05);
+
+          n.connect(f);
+          f.connect(g);
+          g.connect(audioCtx.destination);
+          n.start(delay);
         }
 
       } else if (type === 'seal') {
-        /* 商業封口機：馬達運轉 ➔ 氣壓發熱切膜 ➔ 卡嗒完成 */
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, now);
-        osc.frequency.linearRampToValueAtTime(260, now + 0.18);
-        osc.frequency.linearRampToValueAtTime(90, now + 0.32);
+        /* 3. 擬真商業封口機聲音：下壓馬達聲 ➔ 氣壓加熱切膜聲 ➔ 完成卡嗒聲 */
+        // 第一段：封口機向下壓馬達聲
+        const motorOsc = audioCtx.createOscillator();
+        const motorGain = audioCtx.createGain();
+        motorOsc.type = 'sawtooth';
+        motorOsc.frequency.setValueAtTime(140, now);
+        motorOsc.frequency.linearRampToValueAtTime(220, now + 0.2);
+        motorGain.gain.setValueAtTime(0.1, now);
+        motorGain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+        motorOsc.connect(motorGain);
+        motorGain.connect(audioCtx.destination);
+        motorOsc.start(now);
+        motorOsc.stop(now + 0.2);
 
-        gain.gain.setValueAtTime(0.02, now);
-        gain.gain.linearRampToValueAtTime(0.15, now + 0.08);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.32);
+        // 第二段：氣壓加熱切膜聲（白噪聲衝擊）
+        const sealNow = now + 0.15;
+        const bufSize = audioCtx.sampleRate * 0.2;
+        const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) d[i] = Math.random() * 2 - 1;
 
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.32);
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buf;
+        const f = audioCtx.createBiquadFilter();
+        f.type = 'lowpass';
+        f.frequency.value = 600;
+        const g = audioCtx.createGain();
+        g.gain.setValueAtTime(0.18, sealNow);
+        g.gain.exponentialRampToValueAtTime(0.01, sealNow + 0.2);
+
+        noise.connect(f);
+        f.connect(g);
+        g.connect(audioCtx.destination);
+        noise.start(sealNow);
+
+        // 第三段：機頭彈回「卡嗒」完成聲
+        const clickNow = now + 0.32;
+        const clickOsc = audioCtx.createOscillator();
+        const clickGain = audioCtx.createGain();
+        clickOsc.type = 'square';
+        clickOsc.frequency.setValueAtTime(450, clickNow);
+        clickOsc.frequency.exponentialRampToValueAtTime(80, clickNow + 0.04);
+        clickGain.gain.setValueAtTime(0.15, clickNow);
+        clickGain.gain.linearRampToValueAtTime(0.01, clickNow + 0.04);
+        clickOsc.connect(clickGain);
+        clickGain.connect(audioCtx.destination);
+        clickOsc.start(clickNow);
+        clickOsc.stop(clickNow + 0.04);
 
       } else if (type === 'bell') {
-        /* 服務金屬鈴聲：雙諧音震撼金屬叮噹聲 */
+        /* 金屬服務鈴聲 */
         [1046.5, 2093].forEach((freq) => {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -1358,7 +1416,7 @@
       }
     }
 
-    /* 8 款豐富經典飲品選單 */
+    /* 8 款經典飲品選單 */
     const drinkRecipes = [
       {
         name: '經典珍珠奶茶',
