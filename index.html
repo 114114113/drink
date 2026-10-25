@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧋 寶島手搖調飲大師 — 限時營運挑戰</title>
+  <title>🧋 寶島手搖調飲大師 — 限時營運音效版</title>
   <style>
     :root {
       --bg-main: #fbf8f3;
@@ -700,7 +700,7 @@
       filter: brightness(1.05);
     }
 
-    /* 大型配料區 */
+    /* 大型配料區保持不變 */
     .expanded-toppings-section {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -932,9 +932,7 @@
       </div>
 
       <div class="stats-group">
-        <!-- 跑動的時間顯示 -->
         <div class="time-badge" id="clockText">10:00 AM</div>
-
         <div class="stat-badge">本日收益: <span id="statMoney">$0</span></div>
         <div class="stat-badge">滿意度: <span id="statSatisfaction">100%</span></div>
         <div class="stat-badge">完成杯數: <span id="statCups">0</span> 杯</div>
@@ -1108,7 +1106,7 @@
           </div>
         </div>
 
-        <!-- 4個完整動作按鈕列：搖勻 ➔ 傾倒 ➔ 封口 ➔ 出飲 -->
+        <!-- 4個完整動作按鈕列 -->
         <div class="action-button-row-4">
           <button class="btn-style-shake" onclick="shakeShaker()">👋 搖勻雪克</button>
           <button class="btn-style-pour" onclick="pourToRealCup()">傾倒至客杯 ➔</button>
@@ -1116,7 +1114,7 @@
           <button class="btn-style-serve" onclick="serveDrink()">🔔 製作完成出飲</button>
         </div>
 
-        <!-- 擬真配料區鋼槽 -->
+        <!-- 擬真配料區鋼槽 (維持原樣) -->
         <div class="expanded-toppings-section">
           <div style="font-size:0.8rem; font-weight:900; color:#5d4037;">🥣 配料鋼槽區 (點擊直接舀入實體客用杯)</div>
 
@@ -1259,20 +1257,64 @@
   </div>
 
   <script>
+    /* Web Audio API 合成音效引擎 (免外部檔案) */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } else if (type === 'pour') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(350, now + 0.2);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } else if (type === 'shake') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.linearRampToValueAtTime(80, now + 0.3);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'seal') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.25);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } else if (type === 'bell') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(987.77, now); // B5 鈴音
+        osc.frequency.exponentialRampToValueAtTime(493.88, now + 0.5);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
+      }
+    }
+
+    /* 擴充後的 8 款豐富飲料種類 */
     const drinkRecipes = [
-      {
-        name: '布丁仙草奶茶',
-        size: '大杯 (L)',
-        teaName: '阿薩姆紅茶',
-        needMilk: true,
-        milkVol: 100,
-        sugarCc: 30,
-        sugarName: '少糖',
-        iceScoops: 2,
-        iceName: '少冰',
-        toppings: ['統一布丁', '嫩仙草'],
-        hasCap: false
-      },
       {
         name: '經典珍珠奶茶',
         size: '大杯 (L)',
@@ -1284,6 +1326,19 @@
         iceScoops: 2,
         iceName: '少冰',
         toppings: ['黑糖珍珠'],
+        hasCap: false
+      },
+      {
+        name: '布丁仙草奶茶',
+        size: '大杯 (L)',
+        teaName: '阿薩姆紅茶',
+        needMilk: true,
+        milkVol: 100,
+        sugarCc: 30,
+        sugarName: '少糖',
+        iceScoops: 2,
+        iceName: '少冰',
+        toppings: ['統一布丁', '嫩仙草'],
         hasCap: false
       },
       {
@@ -1310,10 +1365,59 @@
         iceName: '微冰',
         toppings: [],
         hasCap: true
+      },
+      {
+        name: '烏龍鮮奶茶',
+        size: '大杯 (L)',
+        teaName: '凍頂烏龍',
+        needMilk: true,
+        milkVol: 100,
+        sugarCc: 20,
+        sugarName: '半糖',
+        iceScoops: 2,
+        iceName: '少冰',
+        toppings: ['晶瑩椰果'],
+        hasCap: false
+      },
+      {
+        name: '養樂多綠茶',
+        size: '中杯 (M)',
+        teaName: '茉莉綠茶',
+        needMilk: true,
+        milkVol: 50,
+        sugarCc: 10,
+        sugarName: '微糖',
+        iceScoops: 2,
+        iceName: '少冰',
+        toppings: [],
+        hasCap: false
+      },
+      {
+        name: '四季春珍珠青',
+        size: '大杯 (L)',
+        teaName: '四季春茶',
+        needMilk: false,
+        sugarCc: 20,
+        sugarName: '半糖',
+        iceScoops: 2,
+        iceName: '少冰',
+        toppings: ['黑糖珍珠'],
+        hasCap: false
+      },
+      {
+        name: '阿薩姆紅奶蓋',
+        size: '中杯 (M)',
+        teaName: '阿薩姆紅茶',
+        needMilk: false,
+        sugarCc: 10,
+        sugarName: '微糖',
+        iceScoops: 1,
+        iceName: '微冰',
+        toppings: [],
+        hasCap: true
       }
     ];
 
-    // 全域營運數據
     let campaign = {
       day: 1,
       totalMoney: 0,
@@ -1322,10 +1426,9 @@
       todayCups: 0
     };
 
-    // 時間倒數系統變數 (10:00 AM -> 20:00 PM)
     let gameClockTimer = null;
-    let currentMinutes = 10 * 60; // 10:00 AM
-    const END_MINUTES = 20 * 60;  // 08:00 PM
+    let currentMinutes = 10 * 60;
+    const END_MINUTES = 20 * 60;
 
     let currentOrder = {};
     let patience = 100;
@@ -1353,7 +1456,6 @@
       renderHomeScreen();
     };
 
-    /* 首頁與天數邏輯 */
     function renderHomeScreen() {
       document.getElementById('homeDayText').innerText = `第 ${campaign.day} 天`;
       document.getElementById('homeTotalMoney').innerText = `$${campaign.totalMoney}`;
@@ -1361,17 +1463,16 @@
     }
 
     function startGame() {
+      playSound('click');
       document.getElementById('homeScreen').style.display = 'none';
       document.getElementById('appContainer').style.display = 'flex';
       
       campaign.todayMoney = 0;
       campaign.todayCups = 0;
 
-      // 重置時間為 10:00 AM
       currentMinutes = 10 * 60;
       updateClockUI();
 
-      // 啟動時間流逝 (每 0.2 秒增加 1 分鐘遊戲時間)
       clearInterval(gameClockTimer);
       gameClockTimer = setInterval(() => {
         currentMinutes += 1;
@@ -1399,6 +1500,7 @@
     }
 
     function finishCurrentDay() {
+      playSound('bell');
       clearInterval(patienceTimer);
       clearInterval(gameClockTimer);
 
@@ -1412,6 +1514,7 @@
     }
 
     function startNextDay() {
+      playSound('click');
       document.getElementById('daySummaryModal').style.display = 'none';
       campaign.day += 1;
       saveCampaignData();
@@ -1440,6 +1543,7 @@
     }
 
     function resetCampaignData() {
+      playSound('click');
       if (confirm('確定要清空所有營運天數與總收益嗎？')) {
         localStorage.removeItem('boba_campaign_data');
         campaign.day = 1;
@@ -1449,7 +1553,6 @@
       }
     }
 
-    /* 顧客與遊戲製作邏輯 */
     function newCustomer() {
       currentOrder = drinkRecipes[Math.floor(Math.random() * drinkRecipes.length)];
 
@@ -1525,6 +1628,7 @@
     }
 
     function openDrinkModal(teaName, color) {
+      playSound('click');
       const modal = document.getElementById('popModal');
       const title = document.getElementById('popTitle');
       const grid = document.getElementById('popGrid');
@@ -1533,6 +1637,7 @@
 
       ['中杯 (M / 200mL)', '大杯 (L / 350mL)'].forEach(sizeStr => {
         grid.appendChild(createOptBtn(sizeStr, () => {
+          playSound('pour');
           const isL = sizeStr.includes('大杯');
           playerState.cupSize = isL ? '大杯 (L)' : '中杯 (M)';
           playerState.teaName = teaName;
@@ -1556,6 +1661,7 @@
     }
 
     function openMilkModal(milkName, color) {
+      playSound('click');
       const modal = document.getElementById('popModal');
       const title = document.getElementById('popTitle');
       const grid = document.getElementById('popGrid');
@@ -1568,6 +1674,7 @@
         { label: '濃郁大量 (150mL)', vol: 150 }
       ].forEach(m => {
         grid.appendChild(createOptBtn(m.label, () => {
+          playSound('pour');
           playerState.milkVol = m.vol;
           playerState.teaVol += m.vol;
           playerState.teaColor = '#d7ccc8';
@@ -1581,6 +1688,7 @@
     }
 
     function openSugarModal() {
+      playSound('click');
       const modal = document.getElementById('popModal');
       const title = document.getElementById('popTitle');
       const grid = document.getElementById('popGrid');
@@ -1595,6 +1703,7 @@
         { label: '全糖 (40cc)', cc: 40 }
       ].forEach(s => {
         grid.appendChild(createOptBtn(s.label, () => {
+          playSound('click');
           playerState.sugarCc = s.cc;
           addPrepItem('🍯', `果糖 ${s.cc}cc`);
           updateDataUI();
@@ -1606,6 +1715,7 @@
     }
 
     function openIceModal() {
+      playSound('click');
       const modal = document.getElementById('popModal');
       const title = document.getElementById('popTitle');
       const grid = document.getElementById('popGrid');
@@ -1619,6 +1729,7 @@
         { label: '正常冰 (3鏟)', scoops: 3 }
       ].forEach(i => {
         grid.appendChild(createOptBtn(i.label, () => {
+          playSound('click');
           playerState.iceScoops = i.scoops;
           addPrepItem('🧊', `冰塊 ${i.scoops}鏟`);
           updateDataUI();
@@ -1630,6 +1741,7 @@
     }
 
     function addTopping(topName) {
+      playSound('pour');
       playerState.toppings.push(topName);
       const layer = document.getElementById('realCupToppings');
       for(let i=0; i<4; i++) {
@@ -1646,6 +1758,7 @@
     }
 
     function addMilkCap() {
+      playSound('pour');
       playerState.hasMilkCap = true;
       document.getElementById('milkCap').style.height = '20%';
       addPrepItem('🥛', '濃厚奶蓋');
@@ -1660,7 +1773,10 @@
       return btn;
     }
 
-    function closePopModal() { document.getElementById('popModal').style.display = 'none'; }
+    function closePopModal() { 
+      playSound('click');
+      document.getElementById('popModal').style.display = 'none'; 
+    }
 
     function addPrepItem(icon, name) {
       prepItems.push({ icon, name });
@@ -1679,6 +1795,7 @@
     }
 
     function removePrepItem(idx) {
+      playSound('click');
       prepItems.splice(idx, 1);
       renderPrepGrid();
     }
@@ -1703,6 +1820,7 @@
 
     function shakeShaker() {
       if (playerState.teaVol === 0) return;
+      playSound('shake');
       const shaker = document.getElementById('shakerGlass');
       shaker.classList.add('shaking-anim');
       setTimeout(() => {
@@ -1714,6 +1832,7 @@
 
     function pourToRealCup() {
       if (playerState.teaVol === 0) return;
+      playSound('pour');
       const shaker = document.getElementById('shakerGlass');
       shaker.classList.add('pouring-right');
 
@@ -1732,6 +1851,7 @@
 
     function sealCup() {
       if (!playerState.isPoured) return;
+      playSound('seal');
       document.getElementById('sealFilm').style.display = 'block';
       document.getElementById('cupStraw').style.display = 'block';
       playerState.isSealed = true;
@@ -1739,6 +1859,7 @@
     }
 
     function serveDrink() {
+      playSound('bell');
       clearInterval(patienceTimer);
       let score = 100;
       let msg = [];
@@ -1772,6 +1893,7 @@
     }
 
     function nextCustomer() {
+      playSound('click');
       document.getElementById('scoreModal').style.display = 'none';
       newCustomer();
     }
