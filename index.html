@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧋 寶島手搖調飲大師 </title>
+  <title>🧋 寶島手搖調飲大師 — 徹底修正SOP版</title>
   <style>
     :root {
       --bg-main: #fbf8f3;
@@ -1625,7 +1625,7 @@
       let toppingText = currentOrder.toppings.join(' + ') || '無配料';
       if (currentOrder.hasCap) toppingText += (currentOrder.toppings.length ? ' + ' : '') + '濃厚奶蓋';
 
-      // 動態判定乳品名稱與需求
+      // 完全動態生成乳品/特調指引文字
       let milkTaskText = '不需加鮮奶/養樂多';
       let isMilkDone = false;
 
@@ -1643,7 +1643,7 @@
         { name: `1. 指定杯型：${currentOrder.size}`, done: playerState.cupSize === currentOrder.size },
         { name: `2. 客杯加料：${toppingText}`, done: checkToppingsMatch() },
         { name: `3. 注入茶湯：${currentOrder.teaName} (${reqTeaVol}mL)`, done: playerState.teaName === currentOrder.teaName && playerState.teaVol >= reqTeaVol },
-        { name: `4. 調和乳品/酸甜：${milkTaskText}`, done: isMilkDone },
+        { name: `4. 特調/乳品：${milkTaskText}`, done: isMilkDone },
         { name: `5. 定量果糖：${currentOrder.sugarName} (${currentOrder.sugarCc}cc)`, done: playerState.sugarCc === currentOrder.sugarCc },
         { name: `6. 加入冰塊：${currentOrder.iceName} (${currentOrder.iceScoops}鏟)`, done: playerState.iceScoops === currentOrder.iceScoops },
         { name: `7. 搖勻與傾倒：雪克並倒至客杯`, done: playerState.isShaked && playerState.isPoured },
@@ -1905,7 +1905,7 @@
       if (playerState.cupSize !== currentOrder.size) { score -= 15; msg.push(`❌ 杯型錯誤 (${currentOrder.size})`); }
       if (playerState.teaName !== currentOrder.teaName) { score -= 25; msg.push(`❌ 茶底選錯 (${currentOrder.teaName})`); }
 
-      // 檢查乳品種類與音量
+      // 嚴格檢查乳品與養樂多種類
       if (currentOrder.milkType === 'milk') {
         if (playerState.milkName !== '優質鮮奶' || playerState.milkVol !== currentOrder.milkVol) { score -= 20; msg.push(`❌ 鮮奶添加量不符`); }
       } else if (currentOrder.milkType === 'yakult') {
