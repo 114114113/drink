@@ -1003,9 +1003,9 @@
         </div>
       </div>
 
-      <!-- 乳品區 -->
+      <!-- 乳品與特調區 -->
       <div class="eq-block">
-        <div class="eq-title">🥛 乳品區</div>
+        <div class="eq-title">🥛 乳品區 & 酸甜特調</div>
         <div class="eq-btn-grid cols-2">
           <div class="item-btn" onclick="openMilkModal('優質鮮奶', '#ffffff')">
             <svg width="30" height="30" viewBox="0 0 40 40">
@@ -1404,27 +1404,26 @@
       }
     }
 
-    /* 16 款豐富熱門手搖飲品選單 */
+    /* 16 款熱門手搖飲品選單 (精確指定需求類別: milk 或 yakult) */
     const masterDrinkRecipes = [
-      { name: '經典珍珠奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', needMilk: true, milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
-      { name: '布丁仙草奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', needMilk: true, milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['統一布丁', '嫩仙草'], hasCap: false },
-      { name: '茉莉鮮奶綠', size: '中杯 (M)', teaName: '茉莉綠茶', needMilk: true, milkVol: 100, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
-      { name: '四季春奶蓋茶', size: '大杯 (L)', teaName: '四季春茶', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
-      { name: '烏龍鮮奶茶', size: '大杯 (L)', teaName: '凍頂烏龍', needMilk: true, milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false },
-      { name: '養樂多綠茶', size: '中杯 (M)', teaName: '茉莉綠茶', needMilk: true, milkVol: 50, sugarCc: 10, sugarName: '微糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
-      { name: '四季春珍珠青', size: '大杯 (L)', teaName: '四季春茶', needMilk: false, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
-      { name: '阿薩姆紅奶蓋', size: '中杯 (M)', teaName: '阿薩姆紅茶', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
-      { name: '雙色芋圓奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', needMilk: true, milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['雙色芋圓'], hasCap: false },
-      { name: '椰果奶綠', size: '大杯 (L)', teaName: '茉莉綠茶', needMilk: true, milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false },
-      { name: '烏龍奶蓋茶', size: '大杯 (L)', teaName: '凍頂烏龍', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
-      { name: '四季春青茶', size: '中杯 (M)', teaName: '四季春茶', needMilk: false, sugarCc: 0, sugarName: '無糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
-      { name: '阿薩姆紅茶', size: '中杯 (M)', teaName: '阿薩姆紅茶', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
-      { name: '茉莉綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', needMilk: false, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
-      { name: '凍頂烏龍茶', size: '大杯 (L)', teaName: '凍頂烏龍', needMilk: false, sugarCc: 0, sugarName: '無糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
-      { name: '百香綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', needMilk: true, milkVol: 50, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false }
+      { name: '經典珍珠奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', milkType: 'milk', milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
+      { name: '布丁仙草奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', milkType: 'milk', milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['統一布丁', '嫩仙草'], hasCap: false },
+      { name: '茉莉鮮奶綠', size: '中杯 (M)', teaName: '茉莉綠茶', milkType: 'milk', milkVol: 100, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
+      { name: '四季春奶蓋茶', size: '大杯 (L)', teaName: '四季春茶', milkType: 'none', milkVol: 0, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
+      { name: '烏龍鮮奶茶', size: '大杯 (L)', teaName: '凍頂烏龍', milkType: 'milk', milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false },
+      { name: '養樂多綠茶', size: '中杯 (M)', teaName: '茉莉綠茶', milkType: 'yakult', milkVol: 50, sugarCc: 10, sugarName: '微糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
+      { name: '四季春珍珠青', size: '大杯 (L)', teaName: '四季春茶', milkType: 'none', milkVol: 0, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
+      { name: '阿薩姆紅奶蓋', size: '中杯 (M)', teaName: '阿薩姆紅茶', milkType: 'none', milkVol: 0, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
+      { name: '雙色芋圓奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', milkType: 'milk', milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['雙色芋圓'], hasCap: false },
+      { name: '椰果奶綠', size: '大杯 (L)', teaName: '茉莉綠茶', milkType: 'milk', milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false },
+      { name: '烏龍奶蓋茶', size: '大杯 (L)', teaName: '凍頂烏龍', milkType: 'none', milkVol: 0, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
+      { name: '四季春青茶', size: '中杯 (M)', teaName: '四季春茶', milkType: 'none', milkVol: 0, sugarCc: 0, sugarName: '無糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
+      { name: '阿薩姆紅茶', size: '中杯 (M)', teaName: '阿薩姆紅茶', milkType: 'none', milkVol: 0, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
+      { name: '茉莉綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', milkType: 'none', milkVol: 0, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
+      { name: '凍頂烏龍茶', size: '大杯 (L)', teaName: '凍頂烏龍', milkType: 'none', milkVol: 0, sugarCc: 0, sugarName: '無糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
+      { name: '百香綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', milkType: 'yakult', milkVol: 50, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false }
     ];
 
-    // 動態不重複抽牌池
     let availableDrinkPool = [];
 
     let campaign = {
@@ -1448,6 +1447,7 @@
       teaName: '',
       teaVol: 0,
       teaColor: '#a13d2d',
+      milkName: '',
       milkVol: 0,
       sugarCc: 0,
       iceScoops: 0,
@@ -1479,7 +1479,6 @@
       campaign.todayMoney = 0;
       campaign.todayCups = 0;
 
-      // 重置不重複抽牌池
       resetDrinkPool();
 
       currentMinutes = 10 * 60;
@@ -1501,7 +1500,6 @@
     }
 
     function resetDrinkPool() {
-      // 複製主菜單並隨機洗牌
       availableDrinkPool = [...masterDrinkRecipes];
       for (let i = availableDrinkPool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -1575,12 +1573,10 @@
     }
 
     function newCustomer() {
-      // 確保抽牌池不為空
       if (availableDrinkPool.length === 0) {
         resetDrinkPool();
       }
       
-      // 從洗好的牌池中取出第一張（保證當日不重複）
       currentOrder = availableDrinkPool.pop();
 
       document.getElementById('orderTitle').innerText = `我要一杯【${currentOrder.size} ${currentOrder.name}】`;
@@ -1629,11 +1625,25 @@
       let toppingText = currentOrder.toppings.join(' + ') || '無配料';
       if (currentOrder.hasCap) toppingText += (currentOrder.toppings.length ? ' + ' : '') + '濃厚奶蓋';
 
+      // 動態判定乳品名稱與需求
+      let milkTaskText = '不需加鮮奶/養樂多';
+      let isMilkDone = false;
+
+      if (currentOrder.milkType === 'milk') {
+        milkTaskText = `加入鮮奶 (${currentOrder.milkVol}mL)`;
+        isMilkDone = (playerState.milkName === '優質鮮奶' && playerState.milkVol === currentOrder.milkVol);
+      } else if (currentOrder.milkType === 'yakult') {
+        milkTaskText = `加入養樂多 (${currentOrder.milkVol}mL)`;
+        isMilkDone = (playerState.milkName === '養樂多' && playerState.milkVol === currentOrder.milkVol);
+      } else {
+        isMilkDone = (playerState.milkVol === 0);
+      }
+
       const tasks = [
         { name: `1. 指定杯型：${currentOrder.size}`, done: playerState.cupSize === currentOrder.size },
         { name: `2. 客杯加料：${toppingText}`, done: checkToppingsMatch() },
         { name: `3. 注入茶湯：${currentOrder.teaName} (${reqTeaVol}mL)`, done: playerState.teaName === currentOrder.teaName && playerState.teaVol >= reqTeaVol },
-        { name: `4. 乳品調和：${currentOrder.needMilk ? `加入鮮奶 (${currentOrder.milkVol}mL)` : '不需加鮮奶'}`, done: currentOrder.needMilk ? playerState.milkVol === currentOrder.milkVol : playerState.milkVol === 0 },
+        { name: `4. 調和乳品/酸甜：${milkTaskText}`, done: isMilkDone },
         { name: `5. 定量果糖：${currentOrder.sugarName} (${currentOrder.sugarCc}cc)`, done: playerState.sugarCc === currentOrder.sugarCc },
         { name: `6. 加入冰塊：${currentOrder.iceName} (${currentOrder.iceScoops}鏟)`, done: playerState.iceScoops === currentOrder.iceScoops },
         { name: `7. 搖勻與傾倒：雪克並倒至客杯`, done: playerState.isShaked && playerState.isPoured },
@@ -1702,9 +1712,10 @@
       ].forEach(m => {
         grid.appendChild(createOptBtn(m.label, () => {
           playSound('pour');
+          playerState.milkName = milkName;
           playerState.milkVol = m.vol;
           playerState.teaVol += m.vol;
-          playerState.teaColor = '#d7ccc8';
+          playerState.teaColor = milkName === '養樂多' ? '#ffe0b2' : '#d7ccc8';
           addPrepItem('🥛', `${milkName} ${m.vol}mL`);
           updateShakerUI();
           closePopModal();
@@ -1893,7 +1904,16 @@
 
       if (playerState.cupSize !== currentOrder.size) { score -= 15; msg.push(`❌ 杯型錯誤 (${currentOrder.size})`); }
       if (playerState.teaName !== currentOrder.teaName) { score -= 25; msg.push(`❌ 茶底選錯 (${currentOrder.teaName})`); }
-      if (currentOrder.needMilk && playerState.milkVol === 0) { score -= 20; msg.push(`❌ 未加入鮮奶`); }
+
+      // 檢查乳品種類與音量
+      if (currentOrder.milkType === 'milk') {
+        if (playerState.milkName !== '優質鮮奶' || playerState.milkVol !== currentOrder.milkVol) { score -= 20; msg.push(`❌ 鮮奶添加量不符`); }
+      } else if (currentOrder.milkType === 'yakult') {
+        if (playerState.milkName !== '養樂多' || playerState.milkVol !== currentOrder.milkVol) { score -= 20; msg.push(`❌ 養樂多添加量不符`); }
+      } else {
+        if (playerState.milkVol > 0) { score -= 15; msg.push(`❌ 不需添加乳品/養樂多`); }
+      }
+
       if (playerState.sugarCc !== currentOrder.sugarCc) { score -= 15; msg.push(`❌ 甜度不符 (${currentOrder.sugarName})`); }
       if (playerState.iceScoops !== currentOrder.iceScoops) { score -= 15; msg.push(`❌ 冰量不符 (${currentOrder.iceName})`); }
 
@@ -1935,7 +1955,7 @@
     function resetCup() {
       playerState = {
         cupSize: '', teaName: '', teaVol: 0, teaColor: '#a13d2d',
-        milkVol: 0, sugarCc: 0, iceScoops: 0, toppings: [],
+        milkName: '', milkVol: 0, sugarCc: 0, iceScoops: 0, toppings: [],
         hasMilkCap: false, isShaked: false, isPoured: false, isSealed: false
       };
 
