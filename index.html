@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧋 寶島手搖調飲大師 — 超擬真音效版</title>
+  <title>🧋 寶島手搖調飲大師 </title>
   <style>
     :root {
       --bg-main: #fbf8f3;
@@ -403,7 +403,7 @@
       cursor: pointer;
     }
 
-    /* 中央作業區 */
+    /* 中央質感作業區 */
     .center-stage-v2 {
       background: #fdfbf7;
       border: 1.5px solid var(--card-border);
@@ -1265,7 +1265,6 @@
       const now = audioCtx.currentTime;
 
       if (type === 'click') {
-        /* 按鈕輕點音 */
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
@@ -1279,7 +1278,6 @@
         osc.stop(now + 0.03);
 
       } else if (type === 'pour') {
-        /* 1. 擬真倒茶/倒液體水聲：帶通濾波白噪聲水流聲 */
         const duration = 0.45;
         const bufferSize = audioCtx.sampleRate * duration;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -1293,7 +1291,6 @@
 
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        // 頻率隨時間上升，模擬杯子水漸滿的水聲
         filter.frequency.setValueAtTime(500, now);
         filter.frequency.exponentialRampToValueAtTime(1400, now + duration);
         filter.Q.value = 4.0;
@@ -1309,11 +1306,8 @@
         noise.start(now);
 
       } else if (type === 'shake') {
-        /* 2. 擬真雪克搖晃冰塊撞擊聲：多頻率高頻冰塊撞擊 + 水花衝擊聲 */
         for (let i = 0; i < 4; i++) {
           const delay = now + i * 0.11;
-          
-          // 冰塊與金屬硬物碰撞的高頻「喀啦」聲
           const osc = audioCtx.createOscillator();
           const oscGain = audioCtx.createGain();
           osc.type = 'triangle';
@@ -1327,7 +1321,6 @@
           osc.start(delay);
           osc.stop(delay + 0.06);
 
-          // 冰塊間液體水花聲
           const bufSize = audioCtx.sampleRate * 0.05;
           const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
           const d = buf.getChannelData(0);
@@ -1350,8 +1343,6 @@
         }
 
       } else if (type === 'seal') {
-        /* 3. 擬真商業封口機聲音：下壓馬達聲 ➔ 氣壓加熱切膜聲 ➔ 完成卡嗒聲 */
-        // 第一段：封口機向下壓馬達聲
         const motorOsc = audioCtx.createOscillator();
         const motorGain = audioCtx.createGain();
         motorOsc.type = 'sawtooth';
@@ -1364,7 +1355,6 @@
         motorOsc.start(now);
         motorOsc.stop(now + 0.2);
 
-        // 第二段：氣壓加熱切膜聲（白噪聲衝擊）
         const sealNow = now + 0.15;
         const bufSize = audioCtx.sampleRate * 0.2;
         const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
@@ -1385,7 +1375,6 @@
         g.connect(audioCtx.destination);
         noise.start(sealNow);
 
-        // 第三段：機頭彈回「卡嗒」完成聲
         const clickNow = now + 0.32;
         const clickOsc = audioCtx.createOscillator();
         const clickGain = audioCtx.createGain();
@@ -1400,7 +1389,6 @@
         clickOsc.stop(clickNow + 0.04);
 
       } else if (type === 'bell') {
-        /* 金屬服務鈴聲 */
         [1046.5, 2093].forEach((freq) => {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -1416,110 +1404,28 @@
       }
     }
 
-    /* 8 款經典飲品選單 */
-    const drinkRecipes = [
-      {
-        name: '經典珍珠奶茶',
-        size: '大杯 (L)',
-        teaName: '阿薩姆紅茶',
-        needMilk: true,
-        milkVol: 100,
-        sugarCc: 20,
-        sugarName: '半糖',
-        iceScoops: 2,
-        iceName: '少冰',
-        toppings: ['黑糖珍珠'],
-        hasCap: false
-      },
-      {
-        name: '布丁仙草奶茶',
-        size: '大杯 (L)',
-        teaName: '阿薩姆紅茶',
-        needMilk: true,
-        milkVol: 100,
-        sugarCc: 30,
-        sugarName: '少糖',
-        iceScoops: 2,
-        iceName: '少冰',
-        toppings: ['統一布丁', '嫩仙草'],
-        hasCap: false
-      },
-      {
-        name: '茉莉鮮奶綠',
-        size: '中杯 (M)',
-        teaName: '茉莉綠茶',
-        needMilk: true,
-        milkVol: 100,
-        sugarCc: 10,
-        sugarName: '微糖',
-        iceScoops: 1,
-        iceName: '微冰',
-        toppings: [],
-        hasCap: false
-      },
-      {
-        name: '四季春奶蓋茶',
-        size: '大杯 (L)',
-        teaName: '四季春茶',
-        needMilk: false,
-        sugarCc: 10,
-        sugarName: '微糖',
-        iceScoops: 1,
-        iceName: '微冰',
-        toppings: [],
-        hasCap: true
-      },
-      {
-        name: '烏龍鮮奶茶',
-        size: '大杯 (L)',
-        teaName: '凍頂烏龍',
-        needMilk: true,
-        milkVol: 100,
-        sugarCc: 20,
-        sugarName: '半糖',
-        iceScoops: 2,
-        iceName: '少冰',
-        toppings: ['晶瑩椰果'],
-        hasCap: false
-      },
-      {
-        name: '養樂多綠茶',
-        size: '中杯 (M)',
-        teaName: '茉莉綠茶',
-        needMilk: true,
-        milkVol: 50,
-        sugarCc: 10,
-        sugarName: '微糖',
-        iceScoops: 2,
-        iceName: '少冰',
-        toppings: [],
-        hasCap: false
-      },
-      {
-        name: '四季春珍珠青',
-        size: '大杯 (L)',
-        teaName: '四季春茶',
-        needMilk: false,
-        sugarCc: 20,
-        sugarName: '半糖',
-        iceScoops: 2,
-        iceName: '少冰',
-        toppings: ['黑糖珍珠'],
-        hasCap: false
-      },
-      {
-        name: '阿薩姆紅奶蓋',
-        size: '中杯 (M)',
-        teaName: '阿薩姆紅茶',
-        needMilk: false,
-        sugarCc: 10,
-        sugarName: '微糖',
-        iceScoops: 1,
-        iceName: '微冰',
-        toppings: [],
-        hasCap: true
-      }
+    /* 16 款豐富熱門手搖飲品選單 */
+    const masterDrinkRecipes = [
+      { name: '經典珍珠奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', needMilk: true, milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
+      { name: '布丁仙草奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', needMilk: true, milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['統一布丁', '嫩仙草'], hasCap: false },
+      { name: '茉莉鮮奶綠', size: '中杯 (M)', teaName: '茉莉綠茶', needMilk: true, milkVol: 100, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
+      { name: '四季春奶蓋茶', size: '大杯 (L)', teaName: '四季春茶', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
+      { name: '烏龍鮮奶茶', size: '大杯 (L)', teaName: '凍頂烏龍', needMilk: true, milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false },
+      { name: '養樂多綠茶', size: '中杯 (M)', teaName: '茉莉綠茶', needMilk: true, milkVol: 50, sugarCc: 10, sugarName: '微糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
+      { name: '四季春珍珠青', size: '大杯 (L)', teaName: '四季春茶', needMilk: false, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
+      { name: '阿薩姆紅奶蓋', size: '中杯 (M)', teaName: '阿薩姆紅茶', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
+      { name: '雙色芋圓奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', needMilk: true, milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['雙色芋圓'], hasCap: false },
+      { name: '椰果奶綠', size: '大杯 (L)', teaName: '茉莉綠茶', needMilk: true, milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false },
+      { name: '烏龍奶蓋茶', size: '大杯 (L)', teaName: '凍頂烏龍', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: true },
+      { name: '四季春青茶', size: '中杯 (M)', teaName: '四季春茶', needMilk: false, sugarCc: 0, sugarName: '無糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
+      { name: '阿薩姆紅茶', size: '中杯 (M)', teaName: '阿薩姆紅茶', needMilk: false, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
+      { name: '茉莉綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', needMilk: false, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
+      { name: '凍頂烏龍茶', size: '大杯 (L)', teaName: '凍頂烏龍', needMilk: false, sugarCc: 0, sugarName: '無糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
+      { name: '百香綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', needMilk: true, milkVol: 50, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false }
     ];
+
+    // 動態不重複抽牌池
+    let availableDrinkPool = [];
 
     let campaign = {
       day: 1,
@@ -1573,6 +1479,9 @@
       campaign.todayMoney = 0;
       campaign.todayCups = 0;
 
+      // 重置不重複抽牌池
+      resetDrinkPool();
+
       currentMinutes = 10 * 60;
       updateClockUI();
 
@@ -1589,6 +1498,15 @@
 
       updateHeaderStats();
       newCustomer();
+    }
+
+    function resetDrinkPool() {
+      // 複製主菜單並隨機洗牌
+      availableDrinkPool = [...masterDrinkRecipes];
+      for (let i = availableDrinkPool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableDrinkPool[i], availableDrinkPool[j]] = [availableDrinkPool[j], availableDrinkPool[i]];
+      }
     }
 
     function updateClockUI() {
@@ -1657,7 +1575,13 @@
     }
 
     function newCustomer() {
-      currentOrder = drinkRecipes[Math.floor(Math.random() * drinkRecipes.length)];
+      // 確保抽牌池不為空
+      if (availableDrinkPool.length === 0) {
+        resetDrinkPool();
+      }
+      
+      // 從洗好的牌池中取出第一張（保證當日不重複）
+      currentOrder = availableDrinkPool.pop();
 
       document.getElementById('orderTitle').innerText = `我要一杯【${currentOrder.size} ${currentOrder.name}】`;
       let reqStr = `${currentOrder.sugarName} / ${currentOrder.iceName}`;
