@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧋 寶島手搖調飲大師 </title>
+  <title>🧋 寶島手搖調飲大師 — GitHub Pages 完全修正版</title>
   <style>
     :root {
       --bg-main: #fbf8f3;
@@ -261,7 +261,7 @@
       transition: width 0.3s linear, background-color 0.3s;
     }
 
-    /* 吧檯分類區 */
+    /* 吧檯設備區 */
     .equipment-sections {
       display: grid;
       grid-template-columns: 2.2fr 1.1fr 1.1fr;
@@ -1257,11 +1257,26 @@
   </div>
 
   <script>
-    /* 高精細聲學合成音效引擎 */
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    /* 高精細聲學合成音效引擎 (防GitHub Pages卡死設計) */
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+    }
+
+    // 當使用者在頁面上有任何點擊，立即初始化/解鎖 AudioContext
+    window.addEventListener('click', initAudio, { once: true });
+    window.addEventListener('touchstart', initAudio, { once: true });
 
     function playSound(type) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      initAudio();
+      if (!audioCtx || audioCtx.state !== 'running') return;
+
       const now = audioCtx.currentTime;
 
       if (type === 'click') {
@@ -1404,7 +1419,7 @@
       }
     }
 
-    /* 16 款熱門手搖飲品選單 (精確指定需求類別: milk 或 yakult) */
+    /* 16 款熱門手搖飲品選單 */
     const masterDrinkRecipes = [
       { name: '經典珍珠奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', milkType: 'milk', milkVol: 100, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: ['黑糖珍珠'], hasCap: false },
       { name: '布丁仙草奶茶', size: '大杯 (L)', teaName: '阿薩姆紅茶', milkType: 'milk', milkVol: 100, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['統一布丁', '嫩仙草'], hasCap: false },
@@ -1472,12 +1487,9 @@
     }
 
     function startGame() {
-      // 1. 強制啟動/解鎖聲音引擎
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      // 試圖播放聲音，但不阻擋後續邏輯
+      try { playSound('click'); } catch(e) {}
 
-      playSound('click');
       document.getElementById('homeScreen').style.display = 'none';
       document.getElementById('appContainer').style.display = 'flex';
       
