@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧋 寶島手搖調飲大師</title>
+  <title>🧋 寶島手搖調飲大師 — 超擬真完整版</title>
   <style>
     :root {
       --bg-main: #fbf8f3;
@@ -1421,7 +1421,8 @@
       { name: '阿薩姆紅茶', size: '中杯 (M)', teaName: '阿薩姆紅茶', milkType: 'none', milkVol: 0, sugarCc: 10, sugarName: '微糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
       { name: '茉莉綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', milkType: 'none', milkVol: 0, sugarCc: 20, sugarName: '半糖', iceScoops: 2, iceName: '少冰', toppings: [], hasCap: false },
       { name: '凍頂烏龍茶', size: '大杯 (L)', teaName: '凍頂烏龍', milkType: 'none', milkVol: 0, sugarCc: 0, sugarName: '無糖', iceScoops: 1, iceName: '微冰', toppings: [], hasCap: false },
-   
+      { name: '百香綠茶', size: '大杯 (L)', teaName: '茉莉綠茶', milkType: 'yakult', milkVol: 50, sugarCc: 30, sugarName: '少糖', iceScoops: 2, iceName: '少冰', toppings: ['晶瑩椰果'], hasCap: false }
+    ];
 
     let availableDrinkPool = [];
 
@@ -1471,6 +1472,11 @@
     }
 
     function startGame() {
+      // 1. 強制啟動/解鎖聲音引擎
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
       playSound('click');
       document.getElementById('homeScreen').style.display = 'none';
       document.getElementById('appContainer').style.display = 'flex';
@@ -1624,7 +1630,6 @@
       let toppingText = currentOrder.toppings.join(' + ') || '無配料';
       if (currentOrder.hasCap) toppingText += (currentOrder.toppings.length ? ' + ' : '') + '濃厚奶蓋';
 
-      // 完全動態生成乳品/特調指引文字
       let milkTaskText = '不需加鮮奶/養樂多';
       let isMilkDone = false;
 
@@ -1904,7 +1909,6 @@
       if (playerState.cupSize !== currentOrder.size) { score -= 15; msg.push(`❌ 杯型錯誤 (${currentOrder.size})`); }
       if (playerState.teaName !== currentOrder.teaName) { score -= 25; msg.push(`❌ 茶底選錯 (${currentOrder.teaName})`); }
 
-      // 嚴格檢查乳品與養樂多種類
       if (currentOrder.milkType === 'milk') {
         if (playerState.milkName !== '優質鮮奶' || playerState.milkVol !== currentOrder.milkVol) { score -= 20; msg.push(`❌ 鮮奶添加量不符`); }
       } else if (currentOrder.milkType === 'yakult') {
